@@ -1,15 +1,9 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useEffect } from "react";
 import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
   const hello = trpc.useQuery(["example.hello", { text: "from tRPC" }]);
-
-  useEffect(() => {
-    console.log(hello);
-
-  }, []);
 
   return (
     <>
