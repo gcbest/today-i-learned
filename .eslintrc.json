@@ -1,3 +1,15 @@
 {
-  "extends": ["next/core-web-vitals", "plugin:react-hooks/recommended"]
+  "extends": ["next/core-web-vitals", "airbnb", "airbnb-typescript", "airbnb/hooks", "plugin:react-hooks/recommended"],
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "ecmaVersion": "latest"
+  },
+  "rules": {
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
+    "max-len": ["warn", { "ignoreComments": true }],
+    "react/function-component-definition": "off",
+    "react/jsx-props-no-spreading": "warn",
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off"
+  }
 }
