@@ -7,6 +7,7 @@
   "rules": {
     "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
     "max-len": ["warn", { "ignoreComments": true }],
+    "no-console": "error",
     "react/function-component-definition": "off",
     "react/jsx-props-no-spreading": "warn",
     "react/prop-types": "off",

@@ -24,7 +24,8 @@ export const authOptions: NextAuthOptions = {
           placeholder: 'Enter your name',
         },
       },
-      async authorize(credentials, _req) {
+      // async authorize(credentials, _req) { TODO: use _req if needed
+      async authorize(credentials) {
         const user = { id: 1, name: credentials?.name ?? 'J Smith' };
         return user;
       },
