@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   style_check:
     docker:
-      - image: node:16.16.0
+      - image: circleci/node:16.16.0
     steps:
       - run:
           name: Lint Styles
@@ -16,3 +16,10 @@ jobs:
           command: |
             echo 'Hello World!'
             echo 'This is the delivery pipeline'
+workflows:
+  build_and_test:
+    jobs:
+      - style_check
+      - build:
+         requires:
+          - style_check
