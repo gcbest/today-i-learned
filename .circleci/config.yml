@@ -35,11 +35,19 @@ jobs:
       - checkout
       - *restore_pnpm_cache
       - run:
+<<<<<<< HEAD
           name: Lint Styles 
           command: pnpx eslint . --ext .js,.jsx,.ts,.tsx
       - *save_pnpm_cache
   test_unit_integration:
     executor: node-16
+=======
+          name: Lint Styles
+          command: npm run lint
+  build:
+    docker:
+      - image: alpine:3.15
+>>>>>>> 1a521d0 (Updated config.yml)
     steps:
       - checkout
       - *restore_pnpm_cache
