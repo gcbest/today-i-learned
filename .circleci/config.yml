@@ -5,8 +5,8 @@ jobs:
       - image: node:16.16.0
     steps:
       - run:
-        name: Lint Styles
-        command: npm run lint
+          name: Lint Styles
+          command: npm run lint
   build:
     docker:
       - image: alpine:3.15
