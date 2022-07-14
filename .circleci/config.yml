@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   style_check:
     docker:
-      - image: circleci/node:16.16.0
+      - image: node:16.16.0
     steps:
       - run:
           name: Lint Styles
