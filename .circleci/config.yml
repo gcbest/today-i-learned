@@ -5,7 +5,7 @@ jobs:
       - image: node:16.16.0
     steps:
       - run:
-          name: Lint Styles
+          name: Lint Styles 
           command: npm install && npm run lint
   build:
     docker:
