@@ -35,6 +35,10 @@ jobs:
       - checkout
       - *restore_pnpm_cache
       - run:
+          name: pwd
+          command: pwd && ls -la
+
+      - run:
           name: Lint Styles 
           command: pnpx eslint . --ext .js,.jsx,.ts,.tsx
       - *save_pnpm_cache
