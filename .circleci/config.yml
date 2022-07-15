@@ -36,7 +36,10 @@ jobs:
       - *restore_pnpm_cache
       - run:
           name: pwd
-          command: pwd && ls
+          command: pwd
+      - run:
+          name: ls
+          command: ls
 
       - run:
           name: Lint Styles 
