@@ -6,7 +6,7 @@ jobs:
     steps:
       - run:
           name: Lint Styles 
-          command: npm install && npm run lint
+          command: pwd && npm install && npm run lint
   build:
     docker:
       - image: alpine:3.15
