@@ -6,7 +6,7 @@ jobs:
     steps:
       - run:
           name: pwd
-          command: pwd && ls -la
+          command: pwd && ls
 
       - run:
           name: Lint Styles 
