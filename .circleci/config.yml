@@ -5,8 +5,12 @@ jobs:
       - image: node:16.16.0
     steps:
       - run:
+          name: pwd
+          command: pwd && ls -la
+
+      - run:
           name: Lint Styles 
-          command: pwd && npm install && npm run lint
+          command: npm install && npm run lint
   build:
     docker:
       - image: alpine:3.15
