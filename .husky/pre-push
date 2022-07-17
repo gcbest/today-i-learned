@@ -1,8 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-<<<<<<< HEAD
 git fetch && git rebase origin/develop && echo "pre-push hook run"
-=======
-git fetch && git rebase origin/develop
->>>>>>> d728aa7 (Update linting, formatting, circleci (#4))
