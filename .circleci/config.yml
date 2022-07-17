@@ -6,13 +6,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: pwd
-          command: pwd
-      - run:
-          name: ls
-          command: ls
-
-      - run:
           name: Lint Styles 
           command: npm install && npm run lint
   build:
