@@ -6,8 +6,10 @@
   },
   "rules": {
     "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
-    "max-len": ["warn", { "ignoreComments": true }],
+    "import/prefer-default-export": "off",
+    "max-len": ["off", { "code": 100, "ignoreComments": true }],
     "no-console": "error",
+    "operator-linebreak": "off",
     "react/function-component-definition": "off",
     "react/jsx-props-no-spreading": "warn",
     "react/prop-types": "off",
