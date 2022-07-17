@@ -1,4 +1,8 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+<<<<<<< HEAD
 pnpx lint-staged
+=======
+pnpx eslint . --ext .js,.jsx,.ts,.tsx
+>>>>>>> d728aa7 (Update linting, formatting, circleci (#4))
