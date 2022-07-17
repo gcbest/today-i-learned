@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: Lint Styles 
-          command: npm install && npm run lint
+          command: npm install -g pnpm && pnpm install && pnpx eslint . --ext .js,.jsx,.ts,.tsx
   build:
     docker:
       - image: alpine:3.15
@@ -18,7 +18,7 @@ jobs:
             echo 'Hello World!'
             echo 'This is the delivery pipeline'
 workflows:
-  build_and_test:
+  lint_build_test:
     jobs:
       - style_check
       - build:
