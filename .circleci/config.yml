@@ -1,26 +1,101 @@
 version: 2.1
-jobs:
-  style_check:
+executors:
+  node-16:
     docker:
       - image: cimg/node:16.16.0
+jobs:
+  lint:
+    executor: node-16
     steps:
       - checkout
+      - restore_cache:
+          key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
       - run:
           name: Lint Styles 
-          command: npm install -g pnpm && pnpm install && pnpx eslint . --ext .js,.jsx,.ts,.tsx
-  build:
-    docker:
-      - image: alpine:3.15
-    steps:
-      - run:
-          name: The First Step
           command: |
-            echo 'Hello World!'
-            echo 'This is the delivery pipeline'
+            npm install -g pnpm 
+            pnpm install
+            npx eslint . --ext .js,.jsx,.ts,.tsx
+      - save_cache:
+          key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
+          paths: 
+            - node_modules
+  build:
+    executor: node-16
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
+      - run:
+          name: Install packages
+          command: |
+            npm install -g pnpm 
+            pnpm install
+      - save_cache:
+          key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
+          paths: 
+            - ./node_modules
+      - restore_cache:
+          key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
+      - run: 
+          name: Build App
+          command:
+            pnpm build
+      - save_cache:
+          key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
+          paths: 
+            - ./.next/cache
+  test_unit_integration:
+    executor: node-16
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
+      - run: 
+          name: Install Packages
+          command: |
+              npm install -g pnpm 
+              pnpm install
+      - save_cache:
+          key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
+          paths: 
+            - node_modules
+      - run:
+          name: Unit & Integration
+          command: pnpm test
+  test_e2e:
+    docker:
+      - image: mcr.microsoft.com/playwright:v1.23.1-focal
+    environment:
+        NODE_ENV: development # Needed if playwright is in `devDependencies`
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
+      - run: 
+          name: Install Packages
+          command: |
+              npm install -g pnpm 
+              pnpm install
+      - save_cache:
+          key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
+          paths: 
+            - node_modules
+      - run:
+          name: End to End
+          command:
+            pnpm run test:e2e
+            
 workflows:
   lint_build_test:
     jobs:
-      - style_check
+      - lint
       - build:
          requires:
-          - style_check
+          - lint
+      - test_unit_integration:
+          requires:
+            - build
+      - test_e2e:
+          requires:
+            - build
