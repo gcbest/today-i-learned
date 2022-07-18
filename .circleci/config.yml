@@ -3,6 +3,8 @@ executors:
   node-16:
     docker:
       - image: cimg/node:16.16.0
+    working_directory: /tmp
+
 jobs:
   pnpm:
     executor: node-16
@@ -25,7 +27,7 @@ jobs:
     executor: node-16
     steps:
       - attach_workspace:
-          at: /workspace/pnpm
+          at: /tmp/workspace
       - run: pwd && ls
       - checkout
       - restore_cache:
