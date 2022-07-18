@@ -1,4 +1,4 @@
 {
-    "*.ts": "pnpm run prettier:format",
-    "*.tsx": "pnpm run prettier:format"
+    "*.ts": "pnpm run prettier:format && pnpx eslint . --ext .js,.jsx,.ts,.tsx",
+    "*.tsx": "pnpm run prettier:format && pnpx eslint . --ext .js,.jsx,.ts,.tsx"
 }

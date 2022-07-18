@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-pnpx eslint . --ext .js,.jsx,.ts,.tsx
+pnpx lint-staged
