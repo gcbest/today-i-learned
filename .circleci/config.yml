@@ -4,6 +4,19 @@ executors:
     docker:
       - image: cimg/node:16.16.0
 jobs:
+  pnpm:
+    executor: node-16
+    steps:
+      - run: 
+          name: Make workspace
+          command: |
+            mkdir -p workspace/pnpm
+      - run:
+          name: Install pnpm
+          command: |
+            curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@7
+            pnpm config set store-dir ./workspace/pnpm/.pnpm-store
+ 
   lint:
     executor: node-16
     steps:
@@ -89,7 +102,10 @@ jobs:
 workflows:
   lint_build_test:
     jobs:
-      - lint
+      - pnpm
+      - lint:
+         requires:
+           - pnpm
       - build:
          requires:
           - lint
