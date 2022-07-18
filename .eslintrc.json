@@ -1,4 +1,5 @@
 {
+  "root": true,
   "extends": ["next/core-web-vitals", "airbnb", "airbnb-typescript", "airbnb/hooks", "plugin:react-hooks/recommended"],
   "parserOptions": {
     "project": "./tsconfig.json",
