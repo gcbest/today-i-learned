@@ -27,15 +27,23 @@ jobs:
       - restore_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
       - run:
-          name: Build App
+          name: Install packages
           command: |
             npm install -g pnpm 
             pnpm install
-            pnpm build
       - save_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
           paths: 
             - ./node_modules
+      - restore_cache:
+          key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
+      - run: 
+          name: Build App
+          command:
+            pnpm build
+      - save_cache:
+          key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
+          paths: 
             - ./.next/cache
   test_unit_integration:
     executor: node-16
