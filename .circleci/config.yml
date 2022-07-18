@@ -15,18 +15,19 @@ jobs:
           name: Install pnpm
           command: |
             curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@7
-            pnpm config set store-dir ./workspace/pnpm/.pnpm-store
+            pnpm config set store-dir /workspace/pnpm/.pnpm-store
       - persist_to_workspace:
           root: workspace
-          paths:
+          paths: 
             - pnpm
  
   lint:
     executor: node-16
     steps:
-      - checkout
       - attach_workspace:
-          at: ./workspace/pnpm
+          at: /workspace/pnpm
+      - run: pwd && ls
+      - checkout
       - restore_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
       - run:
