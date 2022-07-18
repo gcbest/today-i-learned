@@ -26,10 +26,10 @@ jobs:
   lint:
     executor: node-16
     steps:
+      - checkout
       - attach_workspace:
           at: /tmp/workspace
-      - run: pwd && ls
-      - checkout
+      - run: cd  && ls
       - restore_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
       - run:
