@@ -1,0 +1,4 @@
+{
+    "*.ts": "pnpm run prettier:format",
+    "*.tsx": "pnpm run prettier:format"
+}
