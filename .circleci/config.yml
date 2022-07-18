@@ -26,7 +26,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ./workspace
+          at: ./workspace/pnpm
       - restore_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
       - run:
