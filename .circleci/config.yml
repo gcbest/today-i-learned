@@ -16,19 +16,24 @@ jobs:
           command: |
             curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@7
             pnpm config set store-dir ./workspace/pnpm/.pnpm-store
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - pnpm
  
   lint:
     executor: node-16
     steps:
+      - attach_workspace:
+          at: ./workspace
       - checkout
       - restore_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
       - run:
           name: Lint Styles 
           command: |
-            npm install -g pnpm 
             pnpm install
-            npx eslint . --ext .js,.jsx,.ts,.tsx
+            pnpx eslint . --ext .js,.jsx,.ts,.tsx
       - save_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
           paths: 
