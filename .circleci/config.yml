@@ -2,7 +2,8 @@ version: 2.1
 executors:
   node-16:
     docker:
-      - image: cimg/node:16.16.0
+      - image: gcbest/docker-cimg-pnpm
+
 jobs:
   lint:
     executor: node-16
@@ -12,10 +13,7 @@ jobs:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
       - run:
           name: Lint Styles 
-          command: |
-            npm install -g pnpm 
-            pnpm install
-            npx eslint . --ext .js,.jsx,.ts,.tsx
+          command: pnpx eslint . --ext .js,.jsx,.ts,.tsx
       - save_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
           paths: 
@@ -28,9 +26,7 @@ jobs:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
       - run:
           name: Install packages
-          command: |
-            npm install -g pnpm 
-            pnpm install
+          command: pnpm install
       - save_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
           paths: 
@@ -39,8 +35,7 @@ jobs:
           key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
       - run: 
           name: Build App
-          command:
-            pnpm build
+          command: pnpm build
       - save_cache:
           key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
           paths: 
@@ -53,9 +48,7 @@ jobs:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
       - run: 
           name: Install Packages
-          command: |
-              npm install -g pnpm 
-              pnpm install
+          command: pnpm install
       - save_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
           paths: 
@@ -71,20 +64,19 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
+          key: v1-npm-deps-{{ checksum "pnpm-lock.yaml" }}
       - run: 
           name: Install Packages
           command: |
-              npm install -g pnpm 
-              pnpm install
+              npx playwright install
+              npm install
       - save_cache:
-          key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
+          key: v1-npm-deps-{{ checksum "pnpm-lock.yaml" }}
           paths: 
             - node_modules
       - run:
           name: End to End
-          command:
-            pnpm run test:e2e
+          command: npm run test:e2e
             
 workflows:
   lint_build_test:
