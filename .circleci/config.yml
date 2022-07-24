@@ -3,7 +3,7 @@ executors:
   node-16:
     docker:
       - image: gcbest/docker-cimg-pnpm
-    working_directory: /tmp
+    # working_directory: /tmp
 
 jobs:
   # pnpm:
