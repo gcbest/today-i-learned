@@ -90,13 +90,13 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-npm-deps-{{ checksum "package-lock.yaml" }}
+          key: v1-npm-deps-{{ checksum "pnpm-lock.yaml" }}
       - run: 
           name: Install Packages
           command: |
               npm install
       - save_cache:
-          key: v1-npm-deps-{{ checksum "package-lock.yaml" }}
+          key: v1-npm-deps-{{ checksum "pnpm-lock.yaml" }}
           paths: 
             - node_modules
       - run:
