@@ -90,19 +90,19 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
+          key: v1-npm-deps-{{ checksum "package-lock.yaml" }}
       - run: 
           name: Install Packages
           command: |
-              pnpm install
+              npm install
       - save_cache:
-          key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
+          key: v1-npm-deps-{{ checksum "package-lock.yaml" }}
           paths: 
             - node_modules
       - run:
           name: End to End
           command:
-            pnpm run test:e2e
+            npm run test:e2e
             
 workflows:
   lint_build_test:
