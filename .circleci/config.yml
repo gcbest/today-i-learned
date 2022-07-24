@@ -6,22 +6,22 @@ executors:
     working_directory: /tmp
 
 jobs:
-  pnpm:
-    executor: node-16
-    steps:
-      - run: 
-          name: Make workspace
-          command: |
-            mkdir -p workspace/pnpm
-      - run:
-          name: Install pnpm
-          command: |
-            curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@7
-            pnpm config set store-dir /workspace/pnpm/.pnpm-store
-      - persist_to_workspace:
-          root: workspace
-          paths: 
-            - pnpm
+  # pnpm:
+  #   executor: node-16
+  #   steps:
+  #     - run: 
+  #         name: Make workspace
+  #         command: |
+  #           mkdir -p workspace/pnpm
+  #     - run:
+  #         name: Install pnpm
+  #         command: |
+  #           curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@7
+  #           pnpm config set store-dir /workspace/pnpm/.pnpm-store
+  #     - persist_to_workspace:
+  #         root: workspace
+  #         paths: 
+  #           - pnpm
  
   lint:
     executor: node-16
@@ -107,10 +107,10 @@ jobs:
 workflows:
   lint_build_test:
     jobs:
-      - pnpm
-      - lint:
-         requires:
-           - pnpm
+      # - pnpm
+      - lint
+        #  requires:
+        #    - pnpm
       - build:
          requires:
           - lint
