@@ -27,9 +27,9 @@ jobs:
     executor: node-16
     steps:
       - checkout
-      - attach_workspace:
-          at: /tmp/workspace
-      - run: cd workspace && ls
+      # - attach_workspace:
+      #     at: /tmp/workspace
+      # - run: cd workspace && ls
       - restore_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
       - run:
