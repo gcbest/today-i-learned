@@ -3,40 +3,17 @@ executors:
   node-16:
     docker:
       - image: gcbest/docker-cimg-pnpm
-    # working_directory: /tmp
 
 jobs:
-  # pnpm:
-  #   executor: node-16
-  #   steps:
-  #     - run: 
-  #         name: Make workspace
-  #         command: |
-  #           mkdir -p workspace/pnpm
-  #     - run:
-  #         name: Install pnpm
-  #         command: |
-  #           curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@7
-  #           pnpm config set store-dir /workspace/pnpm/.pnpm-store
-  #     - persist_to_workspace:
-  #         root: workspace
-  #         paths: 
-  #           - pnpm
- 
   lint:
     executor: node-16
     steps:
       - checkout
-      # - attach_workspace:
-      #     at: /tmp/workspace
-      # - run: cd workspace && ls
       - restore_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
       - run:
           name: Lint Styles 
-          command: |
-            pnpm install
-            pnpx eslint . --ext .js,.jsx,.ts,.tsx
+          command: pnpx eslint . --ext .js,.jsx,.ts,.tsx
       - save_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
           paths: 
@@ -49,8 +26,7 @@ jobs:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
       - run:
           name: Install packages
-          command: | 
-            pnpm install
+          command: pnpm install
       - save_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
           paths: 
@@ -59,8 +35,7 @@ jobs:
           key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
       - run: 
           name: Build App
-          command:
-            pnpm build
+          command: pnpm build
       - save_cache:
           key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
           paths: 
@@ -73,8 +48,7 @@ jobs:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
       - run: 
           name: Install Packages
-          command: |
-              pnpm install
+          command: pnpm install
       - save_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
           paths: 
@@ -102,16 +76,12 @@ jobs:
             - node_modules
       - run:
           name: End to End
-          command:
-            npm run test:e2e
+          command: npm run test:e2e
             
 workflows:
   lint_build_test:
     jobs:
-      # - pnpm
       - lint
-        #  requires:
-        #    - pnpm
       - build:
          requires:
           - lint
