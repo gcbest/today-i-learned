@@ -2,7 +2,7 @@ version: 2.1
 executors:
   node-16:
     docker:
-      - image: cimg/node:16.16.0
+      - image: gcbest/docker-cimg-pnpm
     working_directory: /tmp
 
 jobs:
@@ -49,8 +49,7 @@ jobs:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
       - run:
           name: Install packages
-          command: |
-            npm install -g pnpm 
+          command: | 
             pnpm install
       - save_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
@@ -75,7 +74,6 @@ jobs:
       - run: 
           name: Install Packages
           command: |
-              npm install -g pnpm 
               pnpm install
       - save_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
@@ -96,7 +94,6 @@ jobs:
       - run: 
           name: Install Packages
           command: |
-              npm install -g pnpm 
               pnpm install
       - save_cache:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
