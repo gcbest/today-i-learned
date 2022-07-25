@@ -2,7 +2,7 @@ version: 2.1
 executors:
   node-16:
     docker:
-      - image: gcbest/docker-cimg-pnpm
+      - image: gcbest/cimg-pnpm
 
 jobs:
   lint:
