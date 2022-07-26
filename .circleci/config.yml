@@ -90,7 +90,7 @@ jobs:
       #       RAILWAY_TOKEN: ${RAILWAY_TOKEN}
       - run:
           name: Deploy
-          command: railway link today-i-learned && railway environment staging && railway up
+          command: railway login --browserless && railway link today-i-learned && railway environment staging && railway up
           environment:
             RAILWAY_TOKEN: ${RAILWAY_TOKEN}
 
