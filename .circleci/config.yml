@@ -31,15 +31,15 @@ jobs:
           key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
           paths: 
             - ./node_modules
-      - restore_cache:
-          key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
+      # - restore_cache:
+      #     key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
       - run: 
           name: Build App
           command: pnpm build
-      - save_cache:
-          key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
-          paths: 
-            - ./.next/cache
+      # - save_cache:
+      #     key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
+      #     paths: 
+      #       - ./.next/cache
   test_unit_integration:
     executor: node-16
     steps:
@@ -84,31 +84,31 @@ jobs:
       - run:
           name: Install Railway
           command: npm i -g @railway/cli
-      # - run:
-      #     name: Change Environment
-      #     command: railway environment staging
-      #     environment:
-      #       RAILWAY_TOKEN: ${RAILWAY_TOKEN}
-      - run: echo ${RAILWAY_TOKEN2}
+      - restore_cache:
+          key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
       - run:
           name: Deploy
-          command: RAILWAY_TOKEN=${RAILWAY_TOKEN} railway up
+          command: RAILWAY_TOKEN=${RAILWAY_TOKEN_STAGING} railway up
+      - save_cache:
+          key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
+          paths: 
+            - ./.next/cache
 
             
 workflows:
   lint_build_test:
     jobs:
-      # - lint
+      - lint
       # - build:
       #    requires:
       #     - lint
-      # - test_unit_integration:
-      #     requires:
-      #       - build
-      # - test_e2e:
-      #     requires:
-      #       - build
-      - deploy_staging
-          # requires:
-          #   - test_e2e
-          #   - test_unit_integration
+      - test_unit_integration:
+          requires:
+            - lint
+      - test_e2e:
+          requires:
+            - lint
+      - deploy_staging:
+          requires:
+            - test_e2e
+            - test_unit_integration
