@@ -3,34 +3,32 @@ executors:
   node-16:
     docker:
       - image: gcbest/cimg-pnpm
+restore_cache: &restore_cache
+  restore_cache:
+    key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
+save_cache: &save_cache
+  save_cache:
+    key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
+    paths: 
+      - node_modules
 
 jobs:
   lint:
     executor: node-16
     steps:
       - checkout
-      - restore_cache:
-          key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
       - run:
           name: Lint Styles 
           command: pnpx eslint . --ext .js,.jsx,.ts,.tsx
-      - save_cache:
-          key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
-          paths: 
-            - node_modules
   test_unit_integration:
     executor: node-16
     steps:
       - checkout
-      - restore_cache:
-          key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
+      - *restore_cache
       - run: 
           name: Install Packages
           command: pnpm install
-      - save_cache:
-          key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
-          paths: 
-            - node_modules
+      - *save_cache
       - run:
           name: Unit & Integration
           command: pnpm test
@@ -71,6 +69,22 @@ jobs:
           key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
           paths: 
             - ./.next/cache
+  deploy_production:
+    executor: node-16
+    steps:
+      - checkout
+      - run:
+          name: Install Railway
+          command: npm i -g @railway/cli
+      - restore_cache:
+          key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
+      - run:
+          name: Deploy
+          command: RAILWAY_TOKEN=${RAILWAY_TOKEN_PRODUCTION} railway up
+      - save_cache:
+          key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
+          paths: 
+            - ./.next/cache
 
 workflows:
   lint_test_deploy:
@@ -86,3 +100,10 @@ workflows:
           requires:
             - test_e2e
             - test_unit_integration
+      - deploy_production:
+          requires:
+            - deploy_staging
+          filters:
+            branches:
+              only:
+                - main
