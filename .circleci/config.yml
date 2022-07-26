@@ -89,12 +89,12 @@ jobs:
       #     command: railway environment staging
       #     environment:
       #       RAILWAY_TOKEN: ${RAILWAY_TOKEN}
-      - run: echo ${RAILWAY_TOKEN}
+      - run: echo ${RAILWAY_TOKEN2}
       - run:
           name: Deploy
           command: railway up
           environment:
-            RAILWAY_TOKEN: ${RAILWAY_TOKEN}
+            RAILWAY_TOKEN: ${RAILWAY_TOKEN2}
 
             
 workflows:
