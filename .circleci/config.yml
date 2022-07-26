@@ -77,6 +77,18 @@ jobs:
       - run:
           name: End to End
           command: npm run test:e2e
+  deploy_staging:
+    executor: node-16
+    steps:
+      - run:
+          name: Install Railway
+          command: pnpm i -g @railway/cli
+      - run:
+          name: Deploy
+          command: railway up
+          environment:
+            RAILWAY_TOKEN: $RAILWAY_TOKEN
+
             
 workflows:
   lint_build_test:
@@ -91,3 +103,7 @@ workflows:
       - test_e2e:
           requires:
             - build
+      - deploy_staging:
+          requires:
+            - test_e2e
+            - test_unit_integration
