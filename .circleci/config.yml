@@ -80,6 +80,7 @@ jobs:
   deploy_staging:
     executor: node-16
     steps:
+      - checkout
       - run:
           name: Install Railway
           command: npm i -g @railway/cli
@@ -91,7 +92,7 @@ jobs:
       - run: echo ${RAILWAY_TOKEN}
       - run:
           name: Deploy
-          command: railway login --browserless && railway link today-i-learned && railway environment staging && railway up
+          command: railway up
           environment:
             RAILWAY_TOKEN: ${RAILWAY_TOKEN}
 
