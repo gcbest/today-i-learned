@@ -98,10 +98,10 @@ workflows:
           requires:
             - test_e2e
             - test_unit_integration
+          type: approval
       - deploy_production:
           requires:
             - deploy_staging
-          type: approval
           filters:
             branches:
               only:
