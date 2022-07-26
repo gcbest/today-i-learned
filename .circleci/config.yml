@@ -86,6 +86,8 @@ jobs:
       - run:
           name: Change Environment
           command: railway environment staging
+          environment:
+            RAILWAY_TOKEN: ${RAILWAY_TOKEN}
       - run:
           name: Deploy
           command: railway up
@@ -96,17 +98,17 @@ jobs:
 workflows:
   lint_build_test:
     jobs:
-      - lint
-      - build:
-         requires:
-          - lint
-      - test_unit_integration:
-          requires:
-            - build
-      - test_e2e:
-          requires:
-            - build
-      - deploy_staging:
-          requires:
-            - test_e2e
-            - test_unit_integration
+      # - lint
+      # - build:
+      #    requires:
+      #     - lint
+      # - test_unit_integration:
+      #     requires:
+      #       - build
+      # - test_e2e:
+      #     requires:
+      #       - build
+      - deploy_staging
+          # requires:
+          #   - test_e2e
+          #   - test_unit_integration
