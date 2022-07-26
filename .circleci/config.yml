@@ -84,6 +84,9 @@ jobs:
           name: Install Railway
           command: npm i -g @railway/cli
       - run:
+          name: Change Environment
+          command: railway environment staging
+      - run:
           name: Deploy
           command: railway up
           environment:
