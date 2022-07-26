@@ -92,7 +92,7 @@ jobs:
       - run: echo ${RAILWAY_TOKEN2}
       - run:
           name: Deploy
-          command: RAILWAY_TOKEN=${RAILWAY_TOKEN} railway link ${RAILWAY_APP_ID} && railway up
+          command: RAILWAY_TOKEN=${RAILWAY_TOKEN} railway link ${RAILWAY_APP_ID} && railway environment staging && railway up
 
             
 workflows:
