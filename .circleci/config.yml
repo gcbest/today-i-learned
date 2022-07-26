@@ -82,7 +82,7 @@ jobs:
     steps:
       - run:
           name: Install Railway
-          command: pnpm i -g @railway/cli
+          command: pnpm add -g @railway/cli
       - run:
           name: Deploy
           command: railway up
