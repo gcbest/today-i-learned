@@ -17,9 +17,11 @@ jobs:
     executor: node-16
     steps:
       - checkout
+      - *restore_cache
       - run:
           name: Lint Styles 
           command: pnpx eslint . --ext .js,.jsx,.ts,.tsx
+      - *save_cache
   test_unit_integration:
     executor: node-16
     steps:
