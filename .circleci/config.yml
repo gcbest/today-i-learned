@@ -3,34 +3,46 @@ executors:
   node-16:
     docker:
       - image: gcbest/cimg-pnpm
-restore_cache: &restore_cache
+restore_pnpm_cache: &restore_pnpm_cache
   restore_cache:
     key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
-save_cache: &save_cache
+save_pnpm_cache: &save_pnpm_cache
   save_cache:
     key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
     paths: 
       - node_modules
+restore_next_build_cache: &restore_next_build_cache
+  restore_cache:
+    key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
+save_next_build_cache: &save_next_build_cache
+  save_cache:
+    key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
+    paths: 
+      - ./.next/cache
+install_railway: &install_railway
+  run:
+    name: Install Railway
+    command: npm i -g @railway/cli
 
 jobs:
   lint:
     executor: node-16
     steps:
       - checkout
-      - *restore_cache
+      - *restore_pnpm_cache
       - run:
           name: Lint Styles 
           command: pnpx eslint . --ext .js,.jsx,.ts,.tsx
-      - *save_cache
+      - *save_pnpm_cache
   test_unit_integration:
     executor: node-16
     steps:
       - checkout
-      - *restore_cache
+      - *restore_pnpm_cache
       - run: 
           name: Install Packages
           command: pnpm install
-      - *save_cache
+      - *save_pnpm_cache
       - run:
           name: Unit & Integration
           command: pnpm test
@@ -41,17 +53,13 @@ jobs:
         NODE_ENV: development # Needed if playwright is in `devDependencies`
     steps:
       - checkout
-      - restore_cache:
-          key: v1-npm-deps-{{ checksum "pnpm-lock.yaml" }}
+      - *restore_pnpm_cache
       - run: 
           name: Install Packages
           command: |
               npx playwright install
               npm install
-      - save_cache:
-          key: v1-npm-deps-{{ checksum "pnpm-lock.yaml" }}
-          paths: 
-            - node_modules
+      - *save_pnpm_cache
       - run:
           name: End to End
           command: npm run test:e2e
@@ -59,34 +67,22 @@ jobs:
     executor: node-16
     steps:
       - checkout
-      - run:
-          name: Install Railway
-          command: npm i -g @railway/cli
-      - restore_cache:
-          key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
+      - *install_railway
+      - *restore_next_build_cache
       - run:
           name: Deploy
           command: RAILWAY_TOKEN=${RAILWAY_TOKEN_STAGING} railway up
-      - save_cache:
-          key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
-          paths: 
-            - ./.next/cache
+      - *save_next_build_cache
   deploy_production:
     executor: node-16
     steps:
       - checkout
-      - run:
-          name: Install Railway
-          command: npm i -g @railway/cli
-      - restore_cache:
-          key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
+      - *install_railway
+      - *restore_next_build_cache
       - run:
           name: Deploy
           command: RAILWAY_TOKEN=${RAILWAY_TOKEN_PRODUCTION} railway up
-      - save_cache:
-          key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
-          paths: 
-            - ./.next/cache
+      - *save_next_build_cache
 
 workflows:
   lint_test_deploy:
@@ -105,6 +101,7 @@ workflows:
       - deploy_production:
           requires:
             - deploy_staging
+          type: approval
           filters:
             branches:
               only:
