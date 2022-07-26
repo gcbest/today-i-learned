@@ -83,11 +83,11 @@ jobs:
       - run:
           name: Install Railway
           command: npm i -g @railway/cli
-      - run:
-          name: Change Environment
-          command: railway environment staging
-          environment:
-            RAILWAY_TOKEN: ${RAILWAY_TOKEN}
+      # - run:
+      #     name: Change Environment
+      #     command: railway environment staging
+      #     environment:
+      #       RAILWAY_TOKEN: ${RAILWAY_TOKEN}
       - run:
           name: Deploy
           command: railway up
