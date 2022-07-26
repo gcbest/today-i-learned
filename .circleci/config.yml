@@ -90,7 +90,7 @@ jobs:
       #       RAILWAY_TOKEN: ${RAILWAY_TOKEN}
       - run:
           name: Deploy
-          command: railway up
+          command: railway environment staging && railway up
           environment:
             RAILWAY_TOKEN: ${RAILWAY_TOKEN}
 
