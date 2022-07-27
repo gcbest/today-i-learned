@@ -23,6 +23,10 @@ install_railway: &install_railway
   run:
     name: Install Railway
     command: npm i -g @railway/cli
+only_main_branch: &only_main_branch
+  branches:
+    only:
+      - main
 
 jobs:
   lint:
@@ -106,10 +110,10 @@ workflows:
           requires:
             - deploy_staging
           type: approval
+          filters:
+            *only_main_branch
       - deploy_production:
           requires:
             - hold
           filters:
-            branches:
-              only:
-                - main
+            *only_main_branch
