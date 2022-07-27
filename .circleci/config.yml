@@ -98,6 +98,10 @@ workflows:
           requires:
             - test_e2e
             - test_unit_integration
+          filters:
+            branches:
+              only:
+                - develop
       - hold:
           requires:
             - deploy_staging
