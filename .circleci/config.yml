@@ -106,6 +106,7 @@ workflows:
             branches:
               only:
                 - develop
+                - master
       - hold:
           requires:
             - deploy_staging
