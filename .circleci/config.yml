@@ -98,10 +98,13 @@ workflows:
           requires:
             - test_e2e
             - test_unit_integration
-      - deploy_production:
+      - hold:
           requires:
             - deploy_staging
           type: approval
+      - deploy_production:
+          requires:
+            - hold
           filters:
             branches:
               only:
