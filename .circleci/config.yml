@@ -87,24 +87,24 @@ jobs:
 workflows:
   lint_test_deploy:
     jobs:
-      - lint
-      - test_unit_integration:
-          requires:
-            - lint
-      - test_e2e:
-          requires:
-            - lint
-      - deploy_staging:
-          requires:
-            - test_e2e
-            - test_unit_integration
+      # - lint
+      # - test_unit_integration:
+      #     requires:
+      #       - lint
+      # - test_e2e:
+      #     requires:
+      #       - lint
+      - deploy_staging
+          # requires:
+          #   - test_e2e
+          #   - test_unit_integration
       - hold:
           requires:
             - deploy_staging
           type: approval
       - deploy_production:
           requires:
-            - deploy_staging
+            - hold
           filters:
             branches:
               only:
