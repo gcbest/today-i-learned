@@ -130,7 +130,7 @@ workflows:
             *only_develop_and_master_branches
       - hold:
           requires:
-            - deploy_staging
+            - post_deploy_staging
           type: approval
           filters:
             *only_master_branch
