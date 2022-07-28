@@ -3,6 +3,22 @@ executors:
   node-16:
     docker:
       - image: gcbest/cimg-pnpm
+orbs: 
+  newman: postman/newman@1.0.0
+
+install_railway: &install_railway
+  run:
+    name: Install Railway
+    command: npm i -g @railway/cli
+only_develop_and_master_branches: &only_develop_and_master_branches
+  branches:
+    only:
+      - develop
+      - master
+only_master_branch: &only_master_branch
+  branches:
+    only:
+      - master
 restore_pnpm_cache: &restore_pnpm_cache
   restore_cache:
     key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
@@ -19,14 +35,6 @@ save_next_build_cache: &save_next_build_cache
     key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
     paths: 
       - ./.next/cache
-install_railway: &install_railway
-  run:
-    name: Install Railway
-    command: npm i -g @railway/cli
-only_master_branch: &only_master_branch
-  branches:
-    only:
-      - master
 
 jobs:
   lint:
@@ -77,6 +85,17 @@ jobs:
           name: Deploy
           command: RAILWAY_TOKEN=${RAILWAY_TOKEN_STAGING} railway up
       - *save_next_build_cache
+  post_deploy_staging:
+    executor: newman/postman-newman-docker
+    steps:
+      - checkout
+      - run: mkdir test-results
+      - newman/newman-run:
+          collection: ./__tests__/endpoints/pages.postman_collection.json
+          environment: ./__tests__/endpoints/staging.postman_environment.json
+          additional-options: -r cli,junit --reporter-junit-export ./test-results
+      - store_test_results:
+          path: test-results
   deploy_production:
     executor: node-16
     steps:
@@ -103,10 +122,12 @@ workflows:
             - test_e2e
             - test_unit_integration
           filters:
-            branches:
-              only:
-                - develop
-                - master
+            *only_develop_and_master_branches
+      - post_deploy_staging:
+          requires:
+            - deploy_staging
+          filters:
+            *only_develop_and_master_branches
       - hold:
           requires:
             - deploy_staging
