@@ -6,10 +6,11 @@ executors:
 orbs: 
   newman: postman/newman@1.0.0
 
-ignore_develop_branch: &ignore_develop_branch
+ignore_develop_and_master_branches: &ignore_develop_and_master_branches
   branches:
     ignore:
       - develop
+      - master
 install_railway: &install_railway
   run:
     name: Install Railway
@@ -116,21 +117,18 @@ workflows:
     jobs:
       - lint:
           filters:
-            *ignore_develop_branch
+            *ignore_develop_and_master_branches
       - test_integration:
           requires:
             - lint
           filters:
-            *ignore_develop_branch
+            *ignore_develop_and_master_branches
       - test_e2e:
           requires:
             - lint
           filters:
-            *ignore_develop_branch
+            *ignore_develop_and_master_branches
       - deploy_staging:
-          requires:
-            - test_e2e
-            - test_integration
           filters:
             *only_develop_and_master_branches
       - test_staging_api:
