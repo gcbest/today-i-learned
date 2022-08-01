@@ -46,7 +46,7 @@ jobs:
           name: Lint Styles 
           command: pnpx eslint . --ext .js,.jsx,.ts,.tsx
       - *save_pnpm_cache
-  test_unit_integration:
+  test_integration:
     executor: node-16
     steps:
       - checkout
@@ -56,8 +56,8 @@ jobs:
           command: pnpm install
       - *save_pnpm_cache
       - run:
-          name: Unit & Integration
-          command: pnpm test
+          name: Integration
+          command: pnpm test:integration
   test_e2e:
     docker:
       - image: mcr.microsoft.com/playwright:v1.23.1-focal
@@ -111,7 +111,7 @@ workflows:
   lint_test_deploy:
     jobs:
       - lint
-      - test_unit_integration:
+      - test_integration:
           requires:
             - lint
       - test_e2e:
@@ -120,7 +120,7 @@ workflows:
       - deploy_staging:
           requires:
             - test_e2e
-            - test_unit_integration
+            - test_integration
           filters:
             *only_develop_and_master_branches
       - staging_api_tests:
