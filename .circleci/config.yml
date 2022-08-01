@@ -6,6 +6,10 @@ executors:
 orbs: 
   newman: postman/newman@1.0.0
 
+ignore_develop_branch: &ignore_develop_branch
+  branches:
+    ignore:
+      - develop
 install_railway: &install_railway
   run:
     name: Install Railway
@@ -85,7 +89,7 @@ jobs:
           name: Deploy
           command: RAILWAY_TOKEN=${RAILWAY_TOKEN_STAGING} railway up
       - *save_next_build_cache
-  staging_api_tests:
+  test_staging_api:
     executor: newman/postman-newman-docker
     steps:
       - checkout
@@ -110,27 +114,33 @@ jobs:
 workflows:
   lint_test_deploy:
     jobs:
-      - lint
+      - lint:
+          filters:
+            *ignore_develop_branch
       - test_integration:
           requires:
             - lint
+          filters:
+            *ignore_develop_branch
       - test_e2e:
           requires:
             - lint
+          filters:
+            *ignore_develop_branch
       - deploy_staging:
           requires:
             - test_e2e
             - test_integration
           filters:
             *only_develop_and_master_branches
-      - staging_api_tests:
+      - test_staging_api:
           requires:
             - deploy_staging
           filters:
             *only_develop_and_master_branches
       - hold:
           requires:
-            - staging_api_tests
+            - test_staging_api
           type: approval
           filters:
             *only_master_branch
