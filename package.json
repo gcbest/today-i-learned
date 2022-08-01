@@ -11,7 +11,10 @@
     "prettier:format": "prettier --write '**/*.{js,jsx,ts,tsx}'",
     "start": "next start",
     "test": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:integration": "vitest __tests__/integration",
+    "test:unit": "vitest __tests__/unit --changed HEAD~1",
+    "test:unit-no-watch": "vitest run __tests__/unit --changed HEAD~1"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.3",

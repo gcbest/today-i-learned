@@ -85,7 +85,7 @@ jobs:
           name: Deploy
           command: RAILWAY_TOKEN=${RAILWAY_TOKEN_STAGING} railway up
       - *save_next_build_cache
-  post_deploy_staging:
+  staging_api_tests:
     executor: newman/postman-newman-docker
     steps:
       - checkout
@@ -123,14 +123,14 @@ workflows:
             - test_unit_integration
           filters:
             *only_develop_and_master_branches
-      - post_deploy_staging:
+      - staging_api_tests:
           requires:
             - deploy_staging
           filters:
             *only_develop_and_master_branches
       - hold:
           requires:
-            - post_deploy_staging
+            - staging_api_tests
           type: approval
           filters:
             *only_master_branch
