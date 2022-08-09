@@ -15,5 +15,24 @@
     "react/jsx-props-no-spreading": "warn",
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off"
-  }
+  },
+  "overrides": [
+    // Only use Testing Library lint rules in jest test files
+    {
+      "files": ["__tests__/**/?(*.)+(spec|test).[jt]s?(x)"],
+      "extends": ["plugin:testing-library/react"],
+      "parserOptions": {
+        "project": ["./cypress/tsconfig.json"]
+      }
+    },
+    // use Cypress lint rules in Cypress test files
+    {
+      "files": ["cypress/e2e/**/*.cy.ts", "cypress/support/*"],
+      "extends": ["plugin:cypress/recommended"],
+      "env": { "cypress/globals": true },
+      "parserOptions": {
+        "project": ["./cypress/tsconfig.json"]
+      }
+    }
+  ]
 }
