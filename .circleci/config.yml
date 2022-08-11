@@ -47,6 +47,13 @@ jobs:
     steps:
       - checkout
       - *restore_pnpm_cache
+      - run: 
+          name: Install Packages
+          command: pnpm install
+      - persist_to_workspace:
+          root: .
+          paths:
+            - 'node_modules'
       - run:
           name: Lint Styles 
           command: pnpx eslint . --ext .js,.jsx,.ts,.tsx
@@ -55,11 +62,8 @@ jobs:
     executor: node-16
     steps:
       - checkout
-      - *restore_pnpm_cache
-      - run: 
-          name: Install Packages
-          command: pnpm install
-      - *save_pnpm_cache
+      - attach_workspace:
+          at: .
       - run:
           name: Integration
           command: pnpm test:integration
