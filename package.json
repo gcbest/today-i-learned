@@ -5,10 +5,6 @@
   "scripts": {
     "build": "next build",
     "build:test": "export NODE_ENV=\"test\" && next build",
-    "cypress:open": "env-cmd -f .env.test.local cypress open",
-    "cypress:start": "start-server-and-test 'npm run start:test' 3000 'npm run cypress:open'",
-    "cypress:build": "npm run build:test && npm run cypress:start",
-    "cypress:run": "start-server-and-test 'npm run start:test' 3000 'env-cmd -f .env.test.local cypress run'",
     "dev": "next dev",
     "lint": "next lint",
     "postinstall": "prisma generate",
@@ -17,11 +13,16 @@
     "start": "next start",
     "start:test": "export NODE_ENV=\"test\" && next start",
     "test": "vitest",
+    "test:cypress:open": "env-cmd -f .env.test.local cypress open",
+    "test:cypress:start": "start-server-and-test 'npm run start:test' 3000 'npm run cypress:open'",
+    "test:cypress:build": "npm run build:test && npm run cypress:start",
+    "test:cypress:run": "start-server-and-test 'npm run start:test' 3000 'env-cmd -f .env.test.local cypress run'",
+    "test:cypress:run:ci": "start-server-and-test 'npm run start:test' 3000 'cypress run'",
     "test:db:migrate": "pnpx prisma migrate reset --env-file .env.test.local --force --skip-generate --skip-seed",
     "test:db:migrate:ci": "pnpx prisma migrate reset --force --skip-generate --skip-seed",
     "test:integration": "vitest __tests__/integration",
     "test:unit": "vitest __tests__/unit --changed HEAD~1",
-    "test:unit-no-watch": "vitest run __tests__/unit --changed HEAD~1"
+    "test:unit:no-watch": "vitest run __tests__/unit --changed HEAD~1"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.3",

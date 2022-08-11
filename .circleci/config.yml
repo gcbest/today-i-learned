@@ -6,6 +6,10 @@ executors:
 orbs: 
   newman: postman/newman@1.0.0
 
+############## Anchors ##############
+attach_workspace: &attach_workspace
+  attach_workspace:
+    at: .
 ignore_develop_and_master_branches: &ignore_develop_and_master_branches
   branches:
     ignore:
@@ -40,6 +44,7 @@ save_next_build_cache: &save_next_build_cache
     key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
     paths: 
       - ./.next/cache
+#####################################
 
 jobs:
   lint:
@@ -62,28 +67,18 @@ jobs:
     executor: node-16
     steps:
       - checkout
-      - attach_workspace:
-          at: .
+      - *attach_workspace
       - run:
           name: Integration
           command: pnpm test:integration
   test_e2e:
-    docker:
-      - image: mcr.microsoft.com/playwright:v1.23.1-focal
-    environment:
-        NODE_ENV: development # Needed if playwright is in `devDependencies`
+    executor: node-16
     steps:
       - checkout
-      - *restore_pnpm_cache
-      - run: 
-          name: Install Packages
-          command: |
-              npx playwright install
-              npm install
-      - *save_pnpm_cache
+      - *attach_workspace
       - run:
           name: End to End
-          command: npm run test:e2e
+          command: pnpm run test:cypress:run:ci
   deploy_staging:
     executor: node-16
     steps:
