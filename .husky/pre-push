@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-pnpm run test:unit-no-watch && git fetch && git rebase origin/develop && echo "pre-push hook run"
+pnpm run test:unit:no-watch && git fetch && git rebase origin/develop && echo "pre-push hook run"
