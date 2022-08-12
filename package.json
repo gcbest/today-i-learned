@@ -17,7 +17,6 @@
     "test:cypress:start": "start-server-and-test 'npm run start:test' 3000 'npm run cypress:open'",
     "test:cypress:build": "npm run build:test && npm run cypress:start",
     "test:cypress:run": "start-server-and-test 'npm run start:test' 3000 'env-cmd -f .env.test.local cypress run'",
-    "test:cypress:run:ci": "start-server-and-test 'npm run start:test' 3000 'cypress run'",
     "test:db:migrate": "pnpx prisma migrate reset --env-file .env.test.local --force --skip-generate --skip-seed",
     "test:db:migrate:ci": "pnpx prisma migrate reset --force --skip-generate --skip-seed",
     "test:integration": "vitest __tests__/integration",

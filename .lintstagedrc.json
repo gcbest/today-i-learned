@@ -1,6 +1,6 @@
 {
-    "*.js": ["pnpm run prettier:format", "pnpx eslint . --fix --ext .js"],
-    "*.jsx": ["pnpm run prettier:format", "pnpx eslint . --fix --ext .jsx"],
-    "*.ts": ["pnpm run prettier:format", "pnpx eslint . --fix --ext .ts"],
-    "*.tsx": ["pnpm run prettier:format", "pnpx eslint . --fix --ext .tsx"]
+    "*.js": ["npm run prettier:format", "npx eslint . --fix --ext .js"],
+    "*.jsx": ["npm run prettier:format", "npx eslint . --fix --ext .jsx"],
+    "*.ts": ["npm run prettier:format", "npx eslint . --fix --ext .ts"],
+    "*.tsx": ["npm run prettier:format", "npx eslint . --fix --ext .tsx"]
 }
