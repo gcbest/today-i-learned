@@ -3,6 +3,11 @@ executors:
   node-16:
     docker:
       - image: cimg/node:16.16.0
+  cypress-test:
+    docker:
+      - image: cypress/base:16.14.2-slim
+    environment:
+      NODE_ENV: test
 orbs: 
   cypress: cypress-io/cypress@2.1.0
   newman: postman/newman@1.0.0
@@ -61,6 +66,14 @@ jobs:
           name: Lint Styles 
           command: npx eslint . --ext .js,.jsx,.ts,.tsx
       - *save_node_modules_cache
+  test_integration:
+    executor: node-16
+    steps:
+      - checkout
+      - *attach_workspace
+      - run:
+          name: Integration
+          command: npm run test:integration
   build:
     executor: node-16
     steps:
@@ -74,15 +87,7 @@ jobs:
           root: .
           paths:
             - .next
-      - *save_next_build_cache
-  test_integration:
-    executor: node-16
-    steps:
-      - checkout
-      - *attach_workspace
-      - run:
-          name: Integration
-          command: npm run test:integration
+      - *save_next_build_cache          
   deploy_staging:
     executor: node-16
     steps:
@@ -114,25 +119,23 @@ jobs:
       - *save_next_build_cache
 
 workflows:
-  lint_test_deploy:
+  lint_test:
     jobs:
       - lint:
           filters:
             *ignore_develop_and_master_branches
-      - build:
+      - test_integration:
           requires:
             - lint
           filters:
             *ignore_develop_and_master_branches
-      - test_integration:
-          requires:
-            - build
-          filters:
-            *ignore_develop_and_master_branches
       - cypress/install:
           requires:
-            - build
+            - lint
+          filters:
+            *ignore_develop_and_master_branches
           executor: cypress/base-16-14-2-slim
+          build: npm run build
       - cypress/run:
           requires:
             - cypress/install
@@ -140,13 +143,21 @@ workflows:
             *ignore_develop_and_master_branches
           pre-steps:
             - checkout
-          executor: cypress/base-16-14-2-slim
+          executor: cypress-test
           start: npm start
           wait-on: 'http://localhost:3000'
           parallel: true
           parallelism: 2
           group: 'cypress tests'
+          no-workspace: true
+  build_deploy:
+    jobs:
+      - build:
+            filters:
+              *only_develop_and_master_branches
       - deploy_staging:
+          requires:
+            - build
           filters:
             *only_develop_and_master_branches
       - test_staging_api:
