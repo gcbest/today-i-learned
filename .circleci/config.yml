@@ -27,20 +27,21 @@ only_master_branch: &only_master_branch
       - master
 restore_node_modules_cache: &restore_node_modules_cache
   restore_cache:
-    key: v2-deps-{{ checksum "package-lock.json" }}
+    key: v1-node-dependencies-{{ checksum "package-lock.json" }}
 save_node_modules_cache: &save_node_modules_cache
   save_cache:
-    key: v2-deps-{{ checksum "package-lock.json" }}
+    key: v1-node-dependencies-{{ checksum "package-lock.json" }}
     paths: 
-      - node_modules
+      - ./node_modules
 restore_next_build_cache: &restore_next_build_cache
   restore_cache:
-    key: v2-next-build-deps-{{ checksum "package-lock.json" }}
+    key: v1-next-build-dependencies-{{ checksum "package-lock.json" }}
 save_next_build_cache: &save_next_build_cache
   save_cache:
-    key: v2-next-build-deps-{{ checksum "package-lock.json" }}
-    paths: 
-      - .next/cache
+    key: v1-next-build-dependencies-{{ checksum "package-lock.json" }}
+    paths:
+      - ./node_modules
+      - ./.next/cache
 #####################################
 
 jobs:
@@ -128,10 +129,12 @@ workflows:
             - build
           filters:
             *ignore_develop_and_master_branches
-      - cypress/install
-      - cypress/run:
+      - cypress/install:
           requires:
             - build
+          executor: cypress/base-16-14-2-slim
+      - cypress/run:
+          requires:
             - cypress/install
           filters:
             *ignore_develop_and_master_branches
@@ -140,7 +143,6 @@ workflows:
           executor: cypress/base-16-14-2-slim
           start: npm start
           wait-on: 'http://localhost:3000'
-          no-workspace: true
           parallel: true
           parallelism: 2
           group: 'cypress tests'
