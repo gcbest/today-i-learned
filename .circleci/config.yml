@@ -2,8 +2,9 @@ version: 2.1
 executors:
   node-16:
     docker:
-      - image: gcbest/cimg-pnpm
+      - image: cimg/node:16.16.0
 orbs: 
+  cypress: cypress-io/cypress@2.1.0
   newman: postman/newman@1.0.0
 
 ############## Anchors ##############
@@ -15,10 +16,6 @@ ignore_develop_and_master_branches: &ignore_develop_and_master_branches
     ignore:
       - develop
       - master
-install_railway: &install_railway
-  run:
-    name: Install Railway
-    command: npm i -g @railway/cli
 only_develop_and_master_branches: &only_develop_and_master_branches
   branches:
     only:
@@ -28,22 +25,22 @@ only_master_branch: &only_master_branch
   branches:
     only:
       - master
-restore_pnpm_cache: &restore_pnpm_cache
+restore_node_modules_cache: &restore_node_modules_cache
   restore_cache:
-    key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
-save_pnpm_cache: &save_pnpm_cache
+    key: v2-deps-{{ checksum "package-lock.json" }}
+save_node_modules_cache: &save_node_modules_cache
   save_cache:
-    key: v1-deps-{{ checksum "pnpm-lock.yaml" }}
+    key: v2-deps-{{ checksum "package-lock.json" }}
     paths: 
       - node_modules
 restore_next_build_cache: &restore_next_build_cache
   restore_cache:
-    key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
+    key: v2-next-build-deps-{{ checksum "package-lock.json" }}
 save_next_build_cache: &save_next_build_cache
   save_cache:
-    key: next-build-deps-{{ checksum "pnpm-lock.yaml" }}
+    key: v2-next-build-deps-{{ checksum "package-lock.json" }}
     paths: 
-      - ./.next/cache
+      - .next/cache
 #####################################
 
 jobs:
@@ -51,18 +48,32 @@ jobs:
     executor: node-16
     steps:
       - checkout
-      - *restore_pnpm_cache
+      - *restore_node_modules_cache
       - run: 
           name: Install Packages
-          command: pnpm install
+          command: npm install
       - persist_to_workspace:
           root: .
           paths:
-            - 'node_modules'
+            - node_modules
       - run:
           name: Lint Styles 
-          command: pnpx eslint . --ext .js,.jsx,.ts,.tsx
-      - *save_pnpm_cache
+          command: npx eslint . --ext .js,.jsx,.ts,.tsx
+      - *save_node_modules_cache
+  build:
+    executor: node-16
+    steps:
+      - checkout
+      - *restore_next_build_cache
+      - *attach_workspace
+      - run:
+          name: Build Next App
+          command: npm run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .next
+      - *save_next_build_cache
   test_integration:
     executor: node-16
     steps:
@@ -70,20 +81,11 @@ jobs:
       - *attach_workspace
       - run:
           name: Integration
-          command: pnpm test:integration
-  test_e2e:
-    executor: node-16
-    steps:
-      - checkout
-      - *attach_workspace
-      - run:
-          name: End to End
-          command: pnpm run test:cypress:run:ci
+          command: npm run test:integration
   deploy_staging:
     executor: node-16
     steps:
       - checkout
-      - *install_railway
       - *restore_next_build_cache
       - run:
           name: Deploy
@@ -104,7 +106,6 @@ jobs:
     executor: node-16
     steps:
       - checkout
-      - *install_railway
       - *restore_next_build_cache
       - run:
           name: Deploy
@@ -117,16 +118,32 @@ workflows:
       - lint:
           filters:
             *ignore_develop_and_master_branches
+      - build:
+          requires:
+            - lint
+          filters:
+            *ignore_develop_and_master_branches
       - test_integration:
           requires:
-            - lint
+            - build
           filters:
             *ignore_develop_and_master_branches
-      - test_e2e:
+      - cypress/install
+      - cypress/run:
           requires:
-            - lint
+            - build
+            - cypress/install
           filters:
             *ignore_develop_and_master_branches
+          pre-steps:
+            - checkout
+          executor: cypress/base-16-14-2-slim
+          start: npm start
+          wait-on: 'http://localhost:3000'
+          no-workspace: true
+          parallel: true
+          parallelism: 2
+          group: 'cypress tests'
       - deploy_staging:
           filters:
             *only_develop_and_master_branches
