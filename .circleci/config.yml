@@ -21,15 +21,6 @@ ignore_develop_and_master_branches: &ignore_develop_and_master_branches
     ignore:
       - develop
       - master
-only_develop_and_master_branches: &only_develop_and_master_branches
-  branches:
-    only:
-      - develop
-      - master
-only_master_branch: &only_master_branch
-  branches:
-    only:
-      - master
 restore_node_modules_cache: &restore_node_modules_cache
   restore_cache:
     key: v1-node-dependencies-{{ checksum "package-lock.json" }}
@@ -150,29 +141,4 @@ workflows:
           parallelism: 2
           group: 'cypress tests'
           no-workspace: true
-  build_deploy:
-    jobs:
-      - build:
-            filters:
-              *only_develop_and_master_branches
-      - deploy_staging:
-          requires:
-            - build
-          filters:
-            *only_develop_and_master_branches
-      - test_staging_api:
-          requires:
-            - deploy_staging
-          filters:
-            *only_develop_and_master_branches
-      - hold:
-          requires:
-            - test_staging_api
-          type: approval
-          filters:
-            *only_master_branch
-      - deploy_production:
-          requires:
-            - hold
-          filters:
-            *only_master_branch
+          
