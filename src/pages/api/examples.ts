@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '../../server/db/client';
 
 const examples = async (req: NextApiRequest, res: NextApiResponse) => {
-  const tests = await prisma.example.findMany();
+  const tests = await prisma.user.findMany();
   res.status(200).json(tests);
 };
 
