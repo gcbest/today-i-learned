@@ -10,6 +10,8 @@
     "postinstall": "prisma generate",
     "prepare": "husky install",
     "prettier:format": "prettier --write '**/*.{js,jsx,ts,tsx}'",
+    "prisma:init:development": "env-cmd -f .env.development.local npx prisma migrate dev --name init",
+    "prisma:init:test": "env-cmd -f .env.test.local npx prisma migrate dev --name init",
     "start": "next start",
     "start:test": "export NODE_ENV=\"test\" && next start",
     "test": "vitest",
